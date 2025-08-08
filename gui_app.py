@@ -1,98 +1,124 @@
-import os
-import tkinter as tk
-from tkinter import filedialog, messagebox
-from tkinter import ttk
 import threading
-import datetime
-from main import run_scan_and_report
+import tkinter as tk
+from tkinter import ttk, messagebox, filedialog
 
-RESULTS_DIR = "results"
-os.makedirs(RESULTS_DIR, exist_ok=True)
+from main import run_scan_and_get_report  # We'll update main.py accordingly
 
-class AutoVulnScannerGUI:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("AutoVulnScanner GUI")
-        self.root.geometry("600x450")
+class AutoVulnScannerGUI(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("AutoVulnScanner GUI")
+        self.geometry("700x500")
+        self.resizable(False, False)
 
         self.target_var = tk.StringVar()
         self.format_var = tk.StringVar(value="txt")
-        self.scan_completed = False
+
+        self.tool_vars = {
+            "WHOIS": tk.BooleanVar(value=True),
+            "Nmap": tk.BooleanVar(value=True),
+            "Nikto": tk.BooleanVar(value=True),
+            "SQLMap": tk.BooleanVar(value=True),
+        }
+
+        self.scan_thread = None
+        self.report_content = None  # will hold report text/pdf data after scan
 
         self.create_widgets()
 
     def create_widgets(self):
-        tk.Label(self.root, text="Target (domain or IP):").pack(pady=5)
-        tk.Entry(self.root, textvariable=self.target_var, width=50).pack(pady=5)
+        tk.Label(self, text="Target URL or IP:").pack(pady=(10, 0))
+        tk.Entry(self, textvariable=self.target_var, width=50).pack()
 
-        tk.Label(self.root, text="Select Tools:").pack()
-        self.tools_vars = {
-            "Nmap": tk.BooleanVar(value=True),
-            "Nikto": tk.BooleanVar(value=True),
-            "SQLMap": tk.BooleanVar(value=True),
-            "WHOIS": tk.BooleanVar(value=True)
-        }
+        tools_frame = tk.LabelFrame(self, text="Select Tools to Run")
+        tools_frame.pack(pady=10, padx=10, fill="x")
+        for tool, var in self.tool_vars.items():
+            cb = tk.Checkbutton(tools_frame, text=tool, variable=var)
+            cb.pack(side="left", padx=5)
 
-        for tool, var in self.tools_vars.items():
-            tk.Checkbutton(self.root, text=tool, variable=var).pack(anchor="w", padx=100)
+        file_frame = tk.Frame(self)
+        file_frame.pack(pady=5)
+        tk.Label(file_frame, text="Format:").grid(row=0, column=0, sticky="w", padx=(15,0))
+        format_options = ["txt", "pdf"]
+        format_menu = ttk.Combobox(file_frame, values=format_options, textvariable=self.format_var, state="readonly", width=5)
+        format_menu.grid(row=0, column=1, padx=5)
 
-        tk.Label(self.root, text="Report Format:").pack()
-        ttk.Combobox(self.root, textvariable=self.format_var, values=["txt", "pdf"]).pack(pady=5)
+        btn_frame = tk.Frame(self)
+        btn_frame.pack(pady=10)
 
-        self.status_label = tk.Label(self.root, text="", fg="green")
-        self.status_label.pack()
+        self.scan_btn = tk.Button(btn_frame, text="Run Scan", command=self.start_scan)
+        self.scan_btn.pack(side="left", padx=10)
 
-        tk.Button(self.root, text="Run Scan", command=self.run_scan).pack(pady=10)
+        self.save_btn = tk.Button(btn_frame, text="Save Report As...", command=self.save_report)
+        self.save_btn.pack(side="left", padx=10)
+        self.save_btn.config(state="disabled")
 
-        self.save_button = tk.Button(self.root, text="Save Report", command=self.save_report)
-        self.save_button.pack(pady=5)
-        self.save_button.pack_forget()  # Initially hidden
+        tk.Label(self, text="Scan Status / Log:").pack()
+        self.log_text = tk.Text(self, height=15, width=80, state="disabled")
+        self.log_text.pack(pady=(0,10))
 
-    def run_scan(self):
+    def log(self, message):
+        self.log_text.config(state="normal")
+        self.log_text.insert(tk.END, message + "\n")
+        self.log_text.see(tk.END)
+        self.log_text.config(state="disabled")
+
+    def start_scan(self):
         target = self.target_var.get().strip()
         if not target:
-            messagebox.showerror("Error", "Please enter a target.")
+            messagebox.showerror("Error", "Please enter a target URL or IP.")
             return
 
-        selected_tools = [tool for tool, var in self.tools_vars.items() if var.get()]
-        if not selected_tools:
-            messagebox.showerror("Error", "Select at least one tool.")
-            return
+        self.scan_btn.config(state="disabled")
+        self.save_btn.config(state="disabled")
+        self.log_text.config(state="normal")
+        self.log_text.delete(1.0, tk.END)
+        self.log_text.config(state="disabled")
+        self.log(f"Starting scan on {target}...")
 
-        self.status_label.config(text="Scanning in progress...", fg="blue")
-        self.save_button.pack_forget()
+        fmt = self.format_var.get()
 
-        report_format = self.format_var.get()
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.output_file = os.path.join(RESULTS_DIR, f"{target.replace('.', '_')}_{timestamp}.{report_format}")
+        def scan_task():
+            try:
+                # Run the scan and get report content (string or bytes)
+                report = run_scan_and_get_report(target, fmt)
+                self.report_content = report
+                self.log(f"Scan completed successfully.")
+                self.save_btn.config(state="normal")
+            except Exception as e:
+                self.log(f"Error during scan: {e}")
+                messagebox.showerror("Scan Error", str(e))
+            finally:
+                self.scan_btn.config(state="normal")
 
-        threading.Thread(target=self._scan_thread, args=(target, selected_tools, report_format), daemon=True).start()
-
-    def _scan_thread(self, target, tools, report_format):
-        try:
-            run_scan_and_report(target, report_format, self.output_file, tools)
-            self.status_label.config(text=f"Scan complete. Report saved at {self.output_file}", fg="green")
-            self.save_button.pack()
-            self.scan_completed = True
-        except Exception as e:
-            self.status_label.config(text=f"Error: {str(e)}", fg="red")
+        self.scan_thread = threading.Thread(target=scan_task)
+        self.scan_thread.start()
 
     def save_report(self):
-        if not self.scan_completed:
-            messagebox.showinfo("Info", "No report to save yet.")
+        if not self.report_content:
+            messagebox.showerror("Error", "No report available to save.")
             return
 
-        dest = filedialog.asksaveasfilename(defaultextension=f".{self.format_var.get()}",
-                                            filetypes=[("All Files", "*.*")])
+        fmt = self.format_var.get()
+        filetypes = [(f"{fmt.upper()} files", f"*.{fmt}"), ("All files", "*.*")]
+        initial_filename = self.target_var.get().strip().replace("://", "_").replace(".", "_").replace("/", "_") + f".{fmt}"
+
+        dest = filedialog.asksaveasfilename(
+            initialfile=initial_filename,
+            defaultextension=f".{fmt}",
+            filetypes=filetypes,
+        )
         if dest:
             try:
-                import shutil
-                shutil.copy(self.output_file, dest)
-                messagebox.showinfo("Success", f"Report copied to {dest}")
+                mode = "wb" if fmt == "pdf" else "w"
+                data = self.report_content if fmt == "txt" else self.report_content  # bytes or str
+
+                with open(dest, mode) as f:
+                    f.write(data)
+                messagebox.showinfo("Success", f"Report saved to {dest}")
             except Exception as e:
-                messagebox.showerror("Error", f"Could not copy file: {e}")
+                messagebox.showerror("Error", f"Failed to save report: {e}")
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = AutoVulnScannerGUI(root)
-    root.mainloop()
+    app = AutoVulnScannerGUI()
+    app.mainloop()
