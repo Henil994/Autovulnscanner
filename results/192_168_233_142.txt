@@ -1,0 +1,25 @@
+AutoVulnScanner Report for 192.168.233.142
+Scan Date: 2025-08-08 18:05:38
+========================================
+
+[WHOIS Scan]
+Whois data for 192.168.233.142:
+Registrar: Example Registrar
+Registrant Country: US
+Creation Date: 2010-01-01
+
+[Nmap Scan]
+Nmap scan results for 192.168.233.142:
+Open ports: 22, 80, 443
+Service versions: OpenSSH 7.6p1, Apache 2.4.29
+
+[Nikto Scan]
+Nikto web server scan results for 192.168.233.142:
+No critical vulnerabilities found.
+
+[SQLMap Scan]
+SQL Injection test results for 192.168.233.142:
+No SQL injection vulnerabilities detected.
+
+========================================
+Scan completed successfully.
