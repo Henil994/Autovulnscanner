@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs and databases
+*.log
+log.txt
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Virtual environments
+venv/
+env/
+
+# Reports and output files (optional, if you want to keep them out of repo)
+results/
+quarantine/
+
+# API keys or secrets file (if any)
+*.key
+

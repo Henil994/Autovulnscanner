@@ -1,0 +1,7 @@
+yara-python
+requests
+reportlab
+# Core dependencies
+pyyaml
+# No extra Python packages needed for nuclei
+tk
