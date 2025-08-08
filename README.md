@@ -17,41 +17,36 @@ Combines network scanning, web vulnerability detection, WHOIS lookup, and malwar
 
 ---
 
+
 ## Installation
 
 1. Clone this repo:
 
-```bash
 git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
 cd YOUR_REPO_NAME
-Install dependencies:
 
-bash
-Copy code
+2. Install dependencies:
+
 pip install -r requirements.txt
 Make sure you have Nmap and Nikto installed on your system.
 
-Configure your VirusTotal API key:
+3. Configure your VirusTotal API key:
 
 Edit the VIRUSTOTAL_API_KEY variable in the main script or set it as an environment variable.
 
 Usage
+
 Run the GUI application:
 
-bash
-Copy code
 python3 gui_app.py
+
 Browse and select the target directory or enter a domain/IP
-
 Select desired tools via checkboxes
-
 Click Run Scan
-
 When scan completes, save your report in your preferred format
 
 Project Structure
-bash
-Copy code
+
 Autovulnscanner/
 ├── gui_app.py            # Main GUI application
 ├── main.py               # Core scanner logic
@@ -61,22 +56,21 @@ Autovulnscanner/
 ├── rules.yar             # YARA rules file
 ├── requirements.txt      # Python dependencies
 └── README.md
+
+
 Contributing
+
 Contributions, issues, and feature requests are welcome!
 Feel free to fork the repo and submit pull requests.
 
 License
 This project is licensed under the MIT License.
 
-Acknowledgements
+Acknowledgements:
+
 Nmap
-
 Nikto
-
 SQLMap
-
 YARA
-
 VirusTotal API
-
 ReportLab
