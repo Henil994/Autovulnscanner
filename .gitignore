@@ -18,6 +18,10 @@ env/
 # Reports and output files (optional, if you want to keep them out of repo)
 results/
 quarantine/
+results/*
+!results/.gitkeep
+!results/*.txt
+!results/*.pdf
 
 # API keys or secrets file (if any)
 *.key
