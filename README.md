@@ -1,76 +1,39 @@
-# AutoVulnScanner 🔍🛡️
+# 🔍 Autovulnscanner
+**Multi-tool Vulnerability & Malware Scanner with GUI**
 
-A multi-tool vulnerability and malware scanner with an easy-to-use GUI.  
-Combines network scanning, web vulnerability detection, WHOIS lookup, and malware scanning powered by YARA & VirusTotal.
+[![Python](https://img.shields.io/badge/Python-3.10-blue.svg)](https://www.python.org/)
+[![GUI](https://img.shields.io/badge/Interface-Tkinter-green.svg)]()
+[![Security Tools](https://img.shields.io/badge/Tools-Nmap%2C%20Nikto%2C%20SQLMap-orange.svg)]()
+[![License](https://img.shields.io/badge/License-MIT-lightgrey.svg)]()
 
----
+## 📌 Overview
+Autovulnscanner is a **GUI-based vulnerability and malware scanning tool** that integrates multiple popular security scanners into a single interface.  
+It’s designed for **penetration testers and QA engineers**, automating scanning, reporting, and malware detection.
 
-## Features
+## 🛠 Features
+- **Integrated Tools**: Nmap, Nikto, SQLMap, WHOIS Lookup, YARA Rules, VirusTotal
+- **Exportable Reports** (Markdown, PDF)
+- **Parallel Execution** for faster scans
+- **Tkinter GUI** for easy use
 
-- **Network Scanning**: Nmap, Nikto, SQLMap integration  
-- **WHOIS Lookup** for domain intelligence  
-- **Malware Detection** using YARA rules and VirusTotal API  
-- **Export Reports** in TXT, CSV, or PDF formats  
-- **Quarantine suspicious files** automatically  
-- **Multi-threaded scanning** for faster results  
-- **Flexible GUI** with selectable tools and save options  
-
----
-
-
-## Installation
-
-1. Clone this repo:
-
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
-cd YOUR_REPO_NAME
-
-2. Install dependencies:
-
-pip install -r requirements.txt
-Make sure you have Nmap and Nikto installed on your system.
-
-3. Configure your VirusTotal API key:
-
-Edit the VIRUSTOTAL_API_KEY variable in the main script or set it as an environment variable.
-
-Usage
-
-Run the GUI application:
-
-python3 gui_app.py
-
-Browse and select the target directory or enter a domain/IP
-Select desired tools via checkboxes
-Click Run Scan
-When scan completes, save your report in your preferred format
-
-Project Structure
-
+## 📂 Project Structure
 Autovulnscanner/
-├── gui_app.py            # Main GUI application
-├── main.py               # Core scanner logic
-├── scanners/             # Individual scanner modules (nmap, nikto, sqlmap, whois)
-├── reports/              # Report exporting utilities
-├── quarantine/           # Quarantine folder for suspicious files
-├── rules.yar             # YARA rules file
-├── requirements.txt      # Python dependencies
-└── README.md
+│── src/ # Main code
+│── tests/ # Automated test cases
+│── result.txt # Example output
+│── QA_Test_Plan.md # Manual test cases
+│── requirements.txt # Dependencies
+│── README.md
 
 
-Contributing
+## 🚀 How to Run
 
-Contributions, issues, and feature requests are welcome!
-Feel free to fork the repo and submit pull requests.
+# Clone repo
+git clone https://github.com/Henil994/Autovulnscanner.git
+cd Autovulnscanner
 
-License
-This project is licensed under the MIT License.
+# Install dependencies
+pip install -r requirements.txt
 
-Acknowledgements:
-
-Nmap
-Nikto
-SQLMap
-YARA
-VirusTotal API
-ReportLab
+# Run app
+python main.py
