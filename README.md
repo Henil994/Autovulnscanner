@@ -40,19 +40,17 @@ python main.py
 
 🧪 QA Testing
 
-Manual tests → See QA_Test_Plan.md
-
 Automated tests → Run:
 
 pytest
 
 📊 Example Test Case
 
-ID	     Description	        Steps              	Expected Result	       Status
+ID	     Description	        Steps             Expected Result	   Status
 
-TC001  	Nmap scan on         Input and run Nmap 	Shows open ports      	Pass
+TC001  	Nmap scan on         Input and run Nmap 	Shows open ports      	    Pass
         scanme.nmap.org     	
-TC002	  VirusTotal scan      Upload test file   	Flags as malicious	    Pass
+TC002   VirusTotal scan      Upload test file   	Flags as malicious	    Pass
         of EICAR file	
         
 📄 Sample Output
