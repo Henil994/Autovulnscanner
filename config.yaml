@@ -1,1 +1,1 @@
-shodan_api_key: "nhswpyYFZFdIX0zJIGuoQdx3bzII7VVU"
+SHODAN_API_KEY = os.getenv("SHODAN_API_KEY")
